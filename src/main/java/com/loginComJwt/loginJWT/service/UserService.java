@@ -39,7 +39,7 @@ public class UserService {
         );
     }
 
-    public UserLoginResponseDTO encontrarEmail(UserLoginRequestDTO user){
+    public UserLoginResponseDTO login(UserLoginRequestDTO user){
         var usuario =  userRepository.findByEmail(user.email())
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,

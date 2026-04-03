@@ -1,5 +1,7 @@
 package com.loginComJwt.loginJWT.auth.controller;
 
+import com.loginComJwt.loginJWT.auth.dto.UserLoginRequestDTO;
+import com.loginComJwt.loginJWT.auth.dto.UserLoginResponseDTO;
 import com.loginComJwt.loginJWT.auth.dto.UserRequestDTO;
 import com.loginComJwt.loginJWT.auth.dto.UserResponseDTO;
 import com.loginComJwt.loginJWT.service.UserService;
@@ -26,6 +28,14 @@ public class UserController {
        var usuario = userService.criarUsuario(userRequestDTO);
 
        return ResponseEntity.status(HttpStatus.CREATED).body(usuario);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<UserLoginResponseDTO> login (
+            @RequestBody @Valid UserLoginRequestDTO requisicao
+    ) {
+        UserLoginResponseDTO response = userService.login(requisicao);
+        return ResponseEntity.ok(response);
     }
 
 }

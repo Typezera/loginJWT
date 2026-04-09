@@ -81,4 +81,18 @@ public class UserService {
         ))
                 .toList();
     };
+
+    public UserResponseGetDTO encontrarUsuarioEmail(String email){
+        return userRepository.findByEmail(email)
+                .map(user ->
+                        new UserResponseGetDTO(
+                                user.getId(),
+                                user.getNome(),
+                                user.getEmail()
+                        )
+                )
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Cliente não encontrado"
+                ));
+    }
 }

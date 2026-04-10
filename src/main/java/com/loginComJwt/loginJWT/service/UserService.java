@@ -95,4 +95,18 @@ public class UserService {
                         HttpStatus.NOT_FOUND, "Cliente não encontrado"
                 ));
     }
+
+    public UserResponseGetDTO encontrarUsuarioById(Long id) {
+        return userRepository.findById(id)
+                .map( user ->
+                        new UserResponseGetDTO(
+                                user.getId(),
+                                user.getNome(),
+                                user.getEmail()
+                        )
+                )
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Esse cliente não existe."
+                ));
+    }
 }

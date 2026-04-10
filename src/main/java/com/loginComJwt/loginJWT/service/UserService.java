@@ -5,7 +5,9 @@ import com.loginComJwt.loginJWT.auth.dto.UserLoginResponseDTO;
 import com.loginComJwt.loginJWT.auth.dto.UserRequestDTO;
 import com.loginComJwt.loginJWT.auth.dto.UserResponseDTO;
 import com.loginComJwt.loginJWT.auth.service.JwtService;
+import com.loginComJwt.loginJWT.dto.UserRequestSetNamePatchDTO;
 import com.loginComJwt.loginJWT.dto.UserResponseGetDTO;
+import com.loginComJwt.loginJWT.dto.UserResponseGetNamePatchDTO;
 import com.loginComJwt.loginJWT.model.UserModel;
 import com.loginComJwt.loginJWT.repository.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -109,4 +111,21 @@ public class UserService {
                         HttpStatus.NOT_FOUND, "Esse cliente não existe."
                 ));
     }
+
+    public UserResponseGetNamePatchDTO atualizarNome(Long id, UserRequestSetNamePatchDTO name){
+        return userRepository.findById(id)
+                .map( user -> {
+                    user.setNome(name.nome());
+
+                    var atualizaNome = userRepository.save(user);
+
+                    return new UserResponseGetNamePatchDTO(
+                            atualizaNome.getNome()
+                    );
+                })
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Cliente Inexistente."
+                ));
+    }
+
 }

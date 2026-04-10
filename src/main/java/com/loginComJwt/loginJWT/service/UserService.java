@@ -4,12 +4,15 @@ import com.loginComJwt.loginJWT.auth.dto.UserLoginRequestDTO;
 import com.loginComJwt.loginJWT.auth.dto.UserLoginResponseDTO;
 import com.loginComJwt.loginJWT.auth.dto.UserRequestDTO;
 import com.loginComJwt.loginJWT.auth.dto.UserResponseDTO;
+import com.loginComJwt.loginJWT.auth.filter.JwtFilter;
 import com.loginComJwt.loginJWT.auth.service.JwtService;
 import com.loginComJwt.loginJWT.dto.UserRequestSetNamePatchDTO;
 import com.loginComJwt.loginJWT.dto.UserResponseGetDTO;
 import com.loginComJwt.loginJWT.dto.UserResponseGetNamePatchDTO;
 import com.loginComJwt.loginJWT.model.UserModel;
 import com.loginComJwt.loginJWT.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +23,7 @@ import java.util.List;
 
 @Service
 public class UserService {
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
@@ -113,12 +117,11 @@ public class UserService {
     }
 
     public UserResponseGetNamePatchDTO atualizarNome(Long id, UserRequestSetNamePatchDTO name){
+
         return userRepository.findById(id)
                 .map( user -> {
                     user.setNome(name.nome());
-
                     var atualizaNome = userRepository.save(user);
-
                     return new UserResponseGetNamePatchDTO(
                             atualizaNome.getNome()
                     );

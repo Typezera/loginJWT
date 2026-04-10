@@ -21,8 +21,13 @@ public class UserController {
         return ResponseEntity.ok(userService.exibirUsuarios());
     }
 
-    @GetMapping("/{email}")
+    @GetMapping("email/{email}")
     public ResponseEntity<UserResponseGetDTO> buscarUsuarioEmail(@PathVariable String email){
         return ResponseEntity.ok(userService.encontrarUsuarioEmail(email));
+    }
+
+    @GetMapping("id/{id}")
+    public ResponseEntity<UserResponseGetDTO> buscarUsuarioById(@PathVariable Long id){
+        return ResponseEntity.ok(userService.encontrarUsuarioById(id));
     }
 }

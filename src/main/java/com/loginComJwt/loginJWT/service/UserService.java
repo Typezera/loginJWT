@@ -6,9 +6,7 @@ import com.loginComJwt.loginJWT.auth.dto.UserRequestDTO;
 import com.loginComJwt.loginJWT.auth.dto.UserResponseDTO;
 import com.loginComJwt.loginJWT.auth.filter.JwtFilter;
 import com.loginComJwt.loginJWT.auth.service.JwtService;
-import com.loginComJwt.loginJWT.dto.UserRequestSetNamePatchDTO;
-import com.loginComJwt.loginJWT.dto.UserResponseGetDTO;
-import com.loginComJwt.loginJWT.dto.UserResponseGetNamePatchDTO;
+import com.loginComJwt.loginJWT.dto.*;
 import com.loginComJwt.loginJWT.model.UserModel;
 import com.loginComJwt.loginJWT.repository.UserRepository;
 import org.slf4j.Logger;
@@ -128,6 +126,20 @@ public class UserService {
                 })
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Cliente Inexistente."
+                ));
+    }
+
+    public UserResponseGetEmailPatchDTO atualizarEmail(Long id, UserRequestSetEmailPatchDTO email){
+        return userRepository.findById(id)
+                .map( user -> {
+                    user.setEmail(email.email());
+                    var atualizaEmail = userRepository.save(user);
+                    return new UserResponseGetEmailPatchDTO(
+                            atualizaEmail.getEmail()
+                    );
+                })
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Cliente não encontrado"
                 ));
     }
 

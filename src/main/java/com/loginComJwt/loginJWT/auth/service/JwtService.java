@@ -1,6 +1,7 @@
 package com.loginComJwt.loginJWT.auth.service;
 
 import com.loginComJwt.loginJWT.model.UserModel;
+import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.io.Decoders;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ public class JwtService {
     public String generateToken(UserModel usuario) {
         return Jwts.builder()
                 .setSubject(usuario.getEmail())
+                .claim("id", usuario.getId())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
                 .signWith(getKey(), SignatureAlgorithm.HS256)
@@ -37,6 +39,15 @@ public class JwtService {
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
+    }
+
+    public Long estrairId(String token){
+        return Jwts.parserBuilder()
+                .setSigningKey(getKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("id", Long.class);
     }
 
     public boolean validaToken(String token){

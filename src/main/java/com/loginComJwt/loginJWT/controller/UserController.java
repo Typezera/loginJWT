@@ -1,8 +1,6 @@
 package com.loginComJwt.loginJWT.controller;
 
-import com.loginComJwt.loginJWT.dto.UserRequestSetNamePatchDTO;
-import com.loginComJwt.loginJWT.dto.UserResponseGetDTO;
-import com.loginComJwt.loginJWT.dto.UserResponseGetNamePatchDTO;
+import com.loginComJwt.loginJWT.dto.*;
 import com.loginComJwt.loginJWT.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,10 +31,17 @@ public class UserController {
         return ResponseEntity.ok(userService.encontrarUsuarioById(id));
     }
 
-    @PatchMapping("{id}")
+    @PatchMapping("update/name/{id}")
     public ResponseEntity<UserResponseGetNamePatchDTO> atualizarNome(
             @PathVariable Long id,
             @RequestBody UserRequestSetNamePatchDTO name){
         return ResponseEntity.ok(userService.atualizarNome(id,name));
+    }
+
+    @PatchMapping("update/email/{id}")
+    public ResponseEntity<UserResponseGetEmailPatchDTO> atualizarEmail(
+            @PathVariable Long id,
+            @RequestBody UserRequestSetEmailPatchDTO email){
+        return ResponseEntity.ok(userService.atualizarEmail(id, email));
     }
 }

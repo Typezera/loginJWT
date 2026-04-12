@@ -4,15 +4,18 @@ import com.loginComJwt.loginJWT.auth.dto.UserLoginRequestDTO;
 import com.loginComJwt.loginJWT.auth.dto.UserLoginResponseDTO;
 import com.loginComJwt.loginJWT.auth.dto.UserRequestDTO;
 import com.loginComJwt.loginJWT.auth.dto.UserResponseDTO;
-import com.loginComJwt.loginJWT.auth.filter.JwtFilter;
 import com.loginComJwt.loginJWT.auth.service.JwtService;
 import com.loginComJwt.loginJWT.dto.*;
+import com.loginComJwt.loginJWT.dto.patchDTO.*;
 import com.loginComJwt.loginJWT.model.UserModel;
 import com.loginComJwt.loginJWT.repository.UserRepository;
+import org.apache.coyote.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -115,32 +118,72 @@ public class UserService {
     }
 
     public UserResponseGetNamePatchDTO atualizarNome(Long id, UserRequestSetNamePatchDTO name){
-
-        return userRepository.findById(id)
-                .map( user -> {
-                    user.setNome(name.nome());
-                    var atualizaNome = userRepository.save(user);
-                    return new UserResponseGetNamePatchDTO(
-                            atualizaNome.getNome()
-                    );
-                })
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Cliente Inexistente."
-                ));
-    }
-
-    public UserResponseGetEmailPatchDTO atualizarEmail(Long id, UserRequestSetEmailPatchDTO email){
-        return userRepository.findById(id)
-                .map( user -> {
-                    user.setEmail(email.email());
-                    var atualizaEmail = userRepository.save(user);
-                    return new UserResponseGetEmailPatchDTO(
-                            atualizaEmail.getEmail()
-                    );
-                })
+        var user = userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Cliente não encontrado"
                 ));
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String emailLogado = (String) auth.getPrincipal();
+
+        var usuarioLogado = userRepository.findByEmail(emailLogado)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        if (!user.getId().equals(usuarioLogado.getId())){
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "Você não pode alterar esse usuário"
+            );
+        }
+
+        user.setNome(name.nome());
+        var atualizarUsuario = userRepository.save(user);
+        return new UserResponseGetNamePatchDTO(
+                atualizarUsuario.getNome()
+        )
+    }
+
+    public UserResponseGetEmailPatchDTO atualizarEmail(Long id, UserRequestSetEmailPatchDTO email, ){
+        var user = userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Cliente não encontrado"
+                ));
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String emailLogado = (String) auth.getPrincipal();
+
+        var usuarioLogado = userRepository.findByEmail(emailLogado)
+                .orElseThrow(() -> new RuntimeException("Usuario do token não encontrado"));
+
+        if (!user.getId().equals(usuarioLogado.getId())){
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "Você não pode alterar esse usuário"
+            );
+        }
+        user.setEmail(email.email());
+        var atualizaEmail = userRepository.save(user);
+
+        return new UserResponseGetEmailPatchDTO(
+                atualizaEmail.getEmail()
+        );
+    }
+
+    public void atualizarSenha(Long id, UserRequestSetSenhaPatchDTO senha){
+        var user = userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Cliente não encontrado"
+                ));
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String emailLogado = (String) auth.getPrincipal();
+
+        var usuarioLogado = userRepository.findByEmail(emailLogado)
+                .orElseThrow(() -> new RuntimeException("Usuário do token não encontrado"));
+
+        if (!user.getId().equals(usuarioLogado.getId())){
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "Você não pode alterar esse usuário"
+            );
+        }
+        user.setSenha(senha.senha());
+        userRepository.save(user);
     }
 
 }

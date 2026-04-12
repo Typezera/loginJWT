@@ -1,6 +1,7 @@
 package com.loginComJwt.loginJWT.auth.filter;
 
 import com.loginComJwt.loginJWT.auth.service.JwtService;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
@@ -31,26 +33,24 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if(authHeader == null || !authHeader.startsWith("Bearer ")){
             filterChain.doFilter(request, response);
-
             return;
         }
         logger.info("Header: {}", request.getHeader("Authorization"));
 
+        String token = authHeader.substring(7).trim();
 
-        String token = authHeader.substring(7);
-        logger.info("Token recebebido: {}", token);
-        logger.info("Token valido? {}", jwtService.validaToken(token));
-        if(jwtService.validaToken(token)){
-            String email = jwtService.extrairEmail(token);
-            logger.info("Token válido", jwtService.validaToken(token));
+        try {
+            Claims claims = jwtService.extrairClaims(token);
+
+            String email = claims.getSubject();
+
             UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(email, null, null);
+                    new UsernamePasswordAuthenticationToken(email, null, new ArrayList<>());
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
-
-            logger.info("Usuário autenticado: {}", email);
+        }catch (Exception e){
+            SecurityContextHolder.clearContext();
         }
-
         filterChain.doFilter(request, response);
     }
 }

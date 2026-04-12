@@ -1,11 +1,13 @@
 package com.loginComJwt.loginJWT.controller;
 
 import com.loginComJwt.loginJWT.dto.*;
+import com.loginComJwt.loginJWT.dto.patchDTO.*;
 import com.loginComJwt.loginJWT.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -43,5 +45,13 @@ public class UserController {
             @PathVariable Long id,
             @RequestBody UserRequestSetEmailPatchDTO email){
         return ResponseEntity.ok(userService.atualizarEmail(id, email));
+    }
+
+    @PatchMapping("update/password/{id}")
+    public ResponseEntity<String> atualizarSenha(
+            @PathVariable Long id,
+            @RequestBody UserRequestSetSenhaPatchDTO senha){
+        userService.atualizarSenha(id, senha);
+        return ResponseEntity.ok("Senha atualizada com sucesso");
     }
 }

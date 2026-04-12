@@ -1,8 +1,11 @@
 package com.loginComJwt.loginJWT.auth.service;
 
+import com.loginComJwt.loginJWT.auth.filter.JwtFilter;
 import com.loginComJwt.loginJWT.model.UserModel;
-import io.jsonwebtoken.Jwt;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.io.Decoders;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import io.jsonwebtoken.Jwts;
@@ -14,12 +17,12 @@ import java.util.Date;
 
 @Service
 public class JwtService {
+    private static final Logger logger = LoggerFactory.getLogger(JwtFilter.class);
     @Value("${jwt.secret}")
     private String secretKey;
 
     private Key getKey(){
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-        return Keys.hmacShaKeyFor(keyBytes);
+        return Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
     public String generateToken(UserModel usuario) {
@@ -32,32 +35,28 @@ public class JwtService {
                 .compact();
     }
 
-    public String extrairEmail(String token){
+    public Claims extrairClaims(String token){
         return Jwts.parserBuilder()
                 .setSigningKey(getKey())
                 .build()
                 .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+                .getBody();
     }
 
-    public Long estrairId(String token){
-        return Jwts.parserBuilder()
-                .setSigningKey(getKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .get("id", Long.class);
+    public String extrairEmail(String token){
+        return extrairClaims(token).getSubject();
+    }
+
+    public Long extrairId(String token){
+        return extrairClaims(token).get("id", Long.class);
     }
 
     public boolean validaToken(String token){
-        try{
-            Jwts.parserBuilder()
-                    .setSigningKey(getKey())
-                    .build()
-                    .parseClaimsJws(token);
+        try {
+            extrairClaims(token);
             return true;
         } catch (Exception e){
+            e.printStackTrace();
             return false;
         }
     }

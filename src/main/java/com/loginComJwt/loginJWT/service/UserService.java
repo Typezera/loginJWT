@@ -55,7 +55,7 @@ public class UserService {
     }
 
     public UserLoginResponseDTO login(UserLoginRequestDTO user){
-        var usuario =  userRepository.findByEmail(user.email())
+        var usuario =  userRepository.findByEmailAndActivateTrue(user.email())
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
                         "Usuário com o Email: " + user.email() + " não encontrado."
@@ -78,7 +78,7 @@ public class UserService {
     }
 
     public List<UserResponseGetDTO> exibirUsuarios() {
-        var usuarios = userRepository.findAll();
+        var usuarios = userRepository.findAllByActivateTrue();
 
         return usuarios.stream().map(usuario -> new UserResponseGetDTO(
                 usuario.getId(),
@@ -89,7 +89,7 @@ public class UserService {
     };
 
     public UserResponseGetDTO encontrarUsuarioEmail(String email){
-        return userRepository.findByEmail(email)
+        return userRepository.findByEmailAndActivateTrue(email)
                 .map(user ->
                         new UserResponseGetDTO(
                                 user.getId(),
@@ -103,7 +103,7 @@ public class UserService {
     }
 
     public UserResponseGetDTO encontrarUsuarioById(Long id) {
-        return userRepository.findById(id)
+        return userRepository.findByIdActivateTrue(id)
                 .map( user ->
                         new UserResponseGetDTO(
                                 user.getId(),
@@ -117,7 +117,7 @@ public class UserService {
     }
 
     public UserResponseGetNamePatchDTO atualizarNome(Long id, UserRequestSetNamePatchDTO name){
-        var user = userRepository.findById(id)
+        var user = userRepository.findByIdActivateTrue(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Cliente não encontrado"
                 ));
@@ -132,7 +132,7 @@ public class UserService {
     }
 
     public UserResponseGetEmailPatchDTO atualizarEmail(Long id, UserRequestSetEmailPatchDTO email){
-        var user = userRepository.findById(id)
+        var user = userRepository.findByIdActivateTrue(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Cliente não encontrado"
                 ));
@@ -148,7 +148,7 @@ public class UserService {
     }
 
     public void atualizarSenha(Long id, UserRequestSetSenhaPatchDTO senha){
-        var user = userRepository.findById(id)
+        var user = userRepository.findByIdActivateTrue(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Cliente não encontrado"
                 ));

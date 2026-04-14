@@ -19,14 +19,14 @@ public class UserModel {
 
     private String telefone;
 
-    boolean isActivate;
+    boolean activate;
 
     public void setActivate(boolean activate) {
-        isActivate = activate;
+        this.activate = activate;
     }
 
-    public boolean isActivate() {
-        return isActivate;
+    public boolean getActivate() {
+        return activate;
     }
 
     public String getTelefone() {

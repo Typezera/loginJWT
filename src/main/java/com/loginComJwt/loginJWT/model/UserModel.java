@@ -19,7 +19,15 @@ public class UserModel {
 
     private String telefone;
 
+    boolean isActivate;
 
+    public void setActivate(boolean activate) {
+        isActivate = activate;
+    }
+
+    public boolean isActivate() {
+        return isActivate;
+    }
 
     public String getTelefone() {
         return telefone;

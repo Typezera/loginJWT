@@ -9,6 +9,7 @@ import com.loginComJwt.loginJWT.dto.*;
 import com.loginComJwt.loginJWT.dto.patchDTO.*;
 import com.loginComJwt.loginJWT.model.UserModel;
 import com.loginComJwt.loginJWT.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -40,7 +41,7 @@ public class UserService {
         user.setEmail(userRequest.email());
         user.setSenha(passwordEncoder.encode(userRequest.senha()));
         user.setTelefone(userRequest.telefone());
-
+        user.setActivate(true);
 
 
         UserModel usuario = userRepository.save(user);
@@ -182,6 +183,28 @@ public class UserService {
         }
         user.setSenha(passwordEncoder.encode(senha.senha()));
         userRepository.save(user);
+    }
+
+    @Transactional
+    public void desativarUsuario(Long id){
+        var user = userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Cliente não encontrado"
+                ));
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String emailLogado = (String) authentication.getPrincipal();
+
+        var usuarioLogado = userRepository.findByEmail(emailLogado)
+                .orElseThrow(() -> new RuntimeException(("Usuário do token não encontrado.")));
+
+        if (!user.getId().equals(usuarioLogado.getId())){
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "Você não pode atualizar informações de outro usuárioM"
+            );
+        }
+
+        user.setActivate(false);
     }
 
 }

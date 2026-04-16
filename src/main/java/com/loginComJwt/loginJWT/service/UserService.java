@@ -7,6 +7,7 @@ import com.loginComJwt.loginJWT.auth.dto.UserResponseDTO;
 import com.loginComJwt.loginJWT.auth.service.JwtService;
 import com.loginComJwt.loginJWT.dto.*;
 import com.loginComJwt.loginJWT.dto.patchDTO.*;
+import com.loginComJwt.loginJWT.model.Role;
 import com.loginComJwt.loginJWT.model.UserModel;
 import com.loginComJwt.loginJWT.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -51,6 +52,7 @@ public class UserService {
         user.setSenha(passwordEncoder.encode(userRequest.senha()));
         user.setTelefone(userRequest.telefone());
         user.setActivate(true);
+        user.setRole(Role.USER);
 
         // futuramente implementar uma forma de avisar o usário
         // que o email já está em uso e fazer com que ele recupere a conta

@@ -34,12 +34,12 @@ public class TaskService {
             usuarioLogado.getEmail()
         );
 
-        return tasks.stream().map(usuario -> new TaskResponseDTO(
-                usuario.getId(),
-                usuario.getNome(),
-                usuario.getDescricao(),
-                usuario.getStatus(),
-                usuario.getData(),
+        return tasks.stream().map(task -> new TaskResponseDTO(
+                task.getId(),
+                task.getNome(),
+                task.getDescricao(),
+                task.getStatus(),
+                task.getData(),
                 userDTO
         ))
                 .toList();

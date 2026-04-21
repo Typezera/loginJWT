@@ -18,7 +18,7 @@ public class TaskController {
 
     public TaskController(TaskService taskService){this.taskService = taskService;}
 
-    @PostMapping()// trás as tarefas do proprio usuário
+    @GetMapping()// trás as tarefas do proprio usuário
     public ResponseEntity<List<TaskResponseDTO>> verTarefas(){
         return ResponseEntity.ok(taskService.mostrarTarefas());
     }

@@ -2,13 +2,17 @@ package com.loginComJwt.loginJWT.service.task;
 
 import com.loginComJwt.loginJWT.dto.taskDto.TaskRequestDTO;
 import com.loginComJwt.loginJWT.dto.taskDto.TaskResponseDTO;
+import com.loginComJwt.loginJWT.dto.taskDto.dtoPatch.DescricaoRequestPatchDto;
+import com.loginComJwt.loginJWT.dto.taskDto.dtoPatch.DescricaoResponsePatchDto;
 import com.loginComJwt.loginJWT.dto.userDto.UserResponseGetDTO;
 import com.loginComJwt.loginJWT.model.task.TaskModel;
 import com.loginComJwt.loginJWT.model.user.UserModel;
 import com.loginComJwt.loginJWT.repository.task.TaskRepository;
 import com.loginComJwt.loginJWT.service.security.SecurityService;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -75,6 +79,22 @@ public class TaskService {
         );
     }
 
+    public DescricaoResponsePatchDto atualizarDescricaoTarefa(Long idTask, DescricaoRequestPatchDto descricao){
+        UserModel user = securityService.getUsuarioLogado();
+        securityService.validarUsuarioLogado(user);
+
+        var task = taskRepository.findById(idTask)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Tarefa não existente"
+                ));
+
+        task.setDescricao(descricao.descricao());
+        var taskDescricao = taskRepository.save(task);
+
+        return new DescricaoResponsePatchDto(
+                taskDescricao.getDescricao()
+        );
+    }
 
 
 }

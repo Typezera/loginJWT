@@ -1,5 +1,6 @@
 package com.loginComJwt.loginJWT.service.security;
 
+import com.loginComJwt.loginJWT.model.task.TaskModel;
 import com.loginComJwt.loginJWT.model.user.UserModel;
 import com.loginComJwt.loginJWT.repository.user.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -35,4 +36,15 @@ public class SecurityService {
             );
         }
     }
+
+    public void validarDonoTarefa(TaskModel task, UserModel user){
+        if(!task.getUsuario().getId().equals(user.getId())){
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Você não pode Alterar essa tarefa."
+            );
+        }
+    }
+
+
 }

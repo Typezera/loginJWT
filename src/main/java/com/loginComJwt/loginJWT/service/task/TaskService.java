@@ -81,12 +81,13 @@ public class TaskService {
 
     public DescricaoResponsePatchDto atualizarDescricaoTarefa(Long idTask, DescricaoRequestPatchDto descricao){
         UserModel user = securityService.getUsuarioLogado();
-        securityService.validarUsuarioLogado(user);
 
         var task = taskRepository.findById(idTask)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Tarefa não existente"
                 ));
+
+        securityService.validarDonoTarefa(task, user); //valida quem é o dono da tarefa
 
         task.setDescricao(descricao.descricao());
         var taskDescricao = taskRepository.save(task);

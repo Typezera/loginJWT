@@ -2,8 +2,8 @@ package com.loginComJwt.loginJWT.controller.task;
 
 import com.loginComJwt.loginJWT.dto.taskDto.TaskRequestDTO;
 import com.loginComJwt.loginJWT.dto.taskDto.TaskResponseDTO;
-import com.loginComJwt.loginJWT.dto.taskDto.dtoPatch.DescricaoRequestPatchDto;
-import com.loginComJwt.loginJWT.dto.taskDto.dtoPatch.DescricaoResponsePatchDto;
+import com.loginComJwt.loginJWT.dto.taskDto.dtoPatch.updateTaskRequestDTO;
+import com.loginComJwt.loginJWT.dto.taskDto.dtoPatch.updateTaskResponseDTO;
 import com.loginComJwt.loginJWT.service.task.TaskService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -32,10 +32,10 @@ public class TaskController {
     };
 
     @PatchMapping("/update/{id}")
-    public ResponseEntity<DescricaoResponsePatchDto> updateDescricao(
+    public ResponseEntity<updateTaskResponseDTO> updateDescricao(
             @Valid
             @PathVariable Long id,
-            @RequestBody DescricaoRequestPatchDto descricao){
+            @RequestBody updateTaskRequestDTO descricao){
         return ResponseEntity.ok(taskService.atualizarDescricaoTarefa(id, descricao));
     }
 }

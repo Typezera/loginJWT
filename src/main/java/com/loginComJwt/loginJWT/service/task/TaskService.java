@@ -2,20 +2,18 @@ package com.loginComJwt.loginJWT.service.task;
 
 import com.loginComJwt.loginJWT.dto.taskDto.TaskRequestDTO;
 import com.loginComJwt.loginJWT.dto.taskDto.TaskResponseDTO;
-import com.loginComJwt.loginJWT.dto.taskDto.dtoPatch.DescricaoRequestPatchDto;
-import com.loginComJwt.loginJWT.dto.taskDto.dtoPatch.DescricaoResponsePatchDto;
+import com.loginComJwt.loginJWT.dto.taskDto.dtoPatch.updateTaskRequestDTO;
+import com.loginComJwt.loginJWT.dto.taskDto.dtoPatch.updateTaskResponseDTO;
 import com.loginComJwt.loginJWT.dto.userDto.UserResponseGetDTO;
 import com.loginComJwt.loginJWT.model.task.TaskModel;
 import com.loginComJwt.loginJWT.model.user.UserModel;
 import com.loginComJwt.loginJWT.repository.task.TaskRepository;
 import com.loginComJwt.loginJWT.service.security.SecurityService;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 @Service
 public class TaskService {
@@ -79,7 +77,7 @@ public class TaskService {
         );
     }
 
-    public DescricaoResponsePatchDto atualizarDescricaoTarefa(Long idTask, DescricaoRequestPatchDto descricao){
+    public updateTaskResponseDTO atualizarDescricaoTarefa(Long idTask, updateTaskRequestDTO update){
         UserModel user = securityService.getUsuarioLogado();
 
         var task = taskRepository.findById(idTask)
@@ -89,11 +87,20 @@ public class TaskService {
 
         securityService.validarDonoTarefa(task, user); //valida quem é o dono da tarefa
 
-        task.setDescricao(descricao.descricao());
-        var taskDescricao = taskRepository.save(task);
+        if (update.nome() != null && !update.nome().isBlank()){ task.setNome(update.nome());}
+        if (update.descricao() != null && !update.descricao().isBlank()){ task.setDescricao(update.descricao());}
+        if (update.status() != null){task.setStatus(update.status());}
 
-        return new DescricaoResponsePatchDto(
-                taskDescricao.getDescricao()
+        task.setNome(update.nome());
+        task.setDescricao(update.descricao());
+        task.setStatus(update.status());
+
+        var taskAtualizada = taskRepository.save(task);
+
+        return new updateTaskResponseDTO(
+                taskAtualizada.getNome(),
+                taskAtualizada.getDescricao(),
+                taskAtualizada.getStatus()
         );
     }
 

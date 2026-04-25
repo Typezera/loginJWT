@@ -1,4 +1,4 @@
 package com.loginComJwt.loginJWT.dto.friendship;
 
-public class FriendshipResponseDTO {
+public record FriendshipResponseDTO() {
 }

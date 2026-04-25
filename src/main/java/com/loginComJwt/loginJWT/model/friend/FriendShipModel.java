@@ -24,4 +24,36 @@ public class FriendShipModel {
     private FriendshipStatus status;
 
     private LocalDateTime createdAt;
+
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setStatus(FriendshipStatus status) {
+        this.status = status;
+    }
+
+    public void setReceiver(UserModel receiver) {
+        this.receiver = receiver;
+    }
+
+    public void setSender(UserModel sender) {
+        this.sender = sender;
+    }
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public FriendshipStatus getStatus() {
+        return status;
+    }
+
+    public UserModel getReceiver() {
+        return receiver;
+    }
+
+    public UserModel getSender() {
+        return sender;
+    }
 }

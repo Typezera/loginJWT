@@ -23,4 +23,12 @@ public class FriendshipController {
         friendshipService.enviarSocilitacao(id);
         return ResponseEntity.ok("Solicitação enviada com sucesso.");
     }
+    @PreAuthorize("hasRole('USER')")
+    @PatchMapping("/{id}/aceitar")
+    public ResponseEntity<String> aceitarSolicitacao(
+            @PathVariable Long id
+    ){
+        friendshipService.aceitarSolicitacao(id);
+        return ResponseEntity.ok("Solicitação aceita.");
+    }
 }

@@ -1,6 +1,7 @@
 package com.loginComJwt.loginJWT.controller.friendship;
 
 import com.loginComJwt.loginJWT.service.friendship.FriendshipService;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -8,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RestController
-@RequestMapping("/adicionar")
+@RequestMapping("/pedido")
 public class FriendshipController {
     private final FriendshipService friendshipService;
     public FriendshipController(FriendshipService friendshipService){
@@ -30,5 +31,14 @@ public class FriendshipController {
     ){
         friendshipService.aceitarSolicitacao(id);
         return ResponseEntity.ok("Solicitação aceita.");
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @PatchMapping("/{id}/recusar")
+    public ResponseEntity<String> recusarSolicitacao(
+            @PathVariable Long id
+    ){
+        friendshipService.recusarSolicitacao(id);
+        return ResponseEntity.ok("Solicitação recusada.");
     }
 }

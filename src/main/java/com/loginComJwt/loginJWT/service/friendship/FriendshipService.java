@@ -62,4 +62,31 @@ public class FriendshipService {
         pedido.setStatus(FriendshipStatus.ACEITAR);
         friendshipRepository.save(pedido);
     }
+
+    public void recusarSolicitacao(Long solicitacao){
+        UserModel usuarioLogado = securityService.getUsuarioLogado();
+
+        var pedido = friendshipRepository.findById(solicitacao)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Solicitação não encontrada."
+                ));
+        if (!pedido.getReceiver().getId().equals(usuarioLogado.getId())){
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Você não pode fazer isso."
+            );
+        }
+
+        if (!pedido.getStatus().equals(FriendshipStatus.PENDENTE)){
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Essa solicitação já foi processada."
+            );
+        }
+
+        pedido.setStatus(FriendshipStatus.RECUSAR);
+        friendshipRepository.save(pedido);
+
+    }
 }

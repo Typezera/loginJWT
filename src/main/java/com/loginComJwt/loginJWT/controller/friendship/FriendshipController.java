@@ -1,11 +1,14 @@
 package com.loginComJwt.loginJWT.controller.friendship;
 
+import com.loginComJwt.loginJWT.dto.friendship.FriendshipResponseDTO;
 import com.loginComJwt.loginJWT.service.friendship.FriendshipService;
 import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RestController
@@ -40,5 +43,11 @@ public class FriendshipController {
     ){
         friendshipService.recusarSolicitacao(id);
         return ResponseEntity.ok("Solicitação recusada.");
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping
+    public ResponseEntity<List<FriendshipResponseDTO>> mostrarPedidos(){
+        return ResponseEntity.ok(friendshipService.verSolicitacoes());
     }
 }

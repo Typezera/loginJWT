@@ -1,5 +1,7 @@
 package com.loginComJwt.loginJWT.service.friendship;
 
+import com.loginComJwt.loginJWT.dto.friendship.FriendshipResponseDTO;
+import com.loginComJwt.loginJWT.dto.userDto.UserResponseGetDTO;
 import com.loginComJwt.loginJWT.model.friend.FriendShipModel;
 import com.loginComJwt.loginJWT.model.friend.FriendshipStatus;
 import com.loginComJwt.loginJWT.model.user.UserModel;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class FriendshipService {
@@ -88,5 +91,23 @@ public class FriendshipService {
         pedido.setStatus(FriendshipStatus.RECUSAR);
         friendshipRepository.save(pedido);
 
+    }
+
+    public List<FriendshipResponseDTO> verSolicitacoes(){
+        UserModel usuarioLogado = securityService.getUsuarioLogado();
+
+        var pedidos = friendshipRepository.findByReceiverAndStatus(usuarioLogado, FriendshipStatus.PENDENTE);
+
+        return pedidos.stream()
+                .map( solicitacao -> new FriendshipResponseDTO(
+                        solicitacao.getCreatedAt(),
+                        solicitacao.getStatus(),
+                        new UserResponseGetDTO(
+                                solicitacao.getSender().getId(),
+                                solicitacao.getSender().getNome(),
+                                solicitacao.getSender().getEmail()
+                        )
+                ))
+                .toList();
     }
 }
